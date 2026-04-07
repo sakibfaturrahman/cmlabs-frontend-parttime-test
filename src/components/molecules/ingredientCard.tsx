@@ -1,37 +1,38 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight } from "lucide-react";
+// src/components/molecules/IngredientCard.tsx
+import { motion } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 export const IngredientCard = ({ ing }: { ing: any }) => (
-  <Link href={`/ingredients/${ing.strIngredient}`}>
-    <Card className="group hover:border-orange-500 transition-all duration-300 overflow-hidden cursor-pointer shadow-sm hover:shadow-xl rounded-3xl border-orange-50/50">
-      <CardContent className="p-0">
-        <div className="bg-gray-50 p-6 flex justify-center relative overflow-hidden">
+  <motion.div whileHover={{ y: -8 }} transition={{ duration: 0.3 }}>
+    <Link href={`/ingredients/${ing.strIngredient}`}>
+      <div className="group bg-white border border-gray-100 rounded-[2.5rem] p-6 transition-all hover:shadow-2xl hover:shadow-red-50 cursor-pointer h-full flex flex-col items-center text-center">
+        <div className="relative w-32 h-32 mb-6 transition-transform duration-500 group-hover:scale-110">
           <Image
             src={`https://www.themealdb.com/images/ingredients/${ing.strIngredient}.png`}
             alt={ing.strIngredient}
-            width={150}
-            height={150}
-            className="object-contain transition-transform duration-500 group-hover:scale-110 z-10"
+            fill
+            className="object-contain"
           />
         </div>
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-xl font-bold text-[#4A3728] group-hover:text-orange-600 transition-colors capitalize">
-              {ing.strIngredient}
+
+        <div className="space-y-2 flex-1">
+          <div className="flex items-center justify-center gap-2">
+            <h3 className="text-lg font-bold text-gray-900 group-hover:text-red-600 transition-colors">
+              {ing.strIngredient.toLowerCase()}
             </h3>
-            <ArrowRight
-              size={16}
-              className="text-orange-600 opacity-0 group-hover:opacity-100 transition-opacity"
+            <ArrowUpRight
+              size={14}
+              className="text-red-600 opacity-0 group-hover:opacity-100 transition-all"
             />
           </div>
-          <p className="text-gray-400 text-xs line-clamp-2 italic">
+          <p className="text-gray-400 text-xs line-clamp-2 font-medium">
             {ing.strDescription ||
-              "Explore various recipes using this ingredient."}
+              "tap to explore delicious recipes using this ingredient."}
           </p>
         </div>
-      </CardContent>
-    </Card>
-  </Link>
+      </div>
+    </Link>
+  </motion.div>
 );

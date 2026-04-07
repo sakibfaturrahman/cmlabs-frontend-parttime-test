@@ -1,12 +1,14 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   images: {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "www.themealdb.com",
-        pathname: "/images/**",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "www.themealdb.com", // Sekalian tambahkan ini untuk API bahan makanan kamu
       },
     ],
   },

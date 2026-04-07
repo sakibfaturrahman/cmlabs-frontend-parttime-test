@@ -1,22 +1,21 @@
-// src/components/molecules/FooterLinkGroup.tsx
-interface FooterLinkGroupProps {
+// src/components/molecules/footerLinkGroup.tsx
+export const FooterLinkGroup = ({
+  title,
+  links,
+}: {
   title: string;
   links: string[];
-}
-
-export const FooterLinkGroup = ({ title, links }: FooterLinkGroupProps) => (
-  <div className="flex flex-col gap-4">
-    <h4 className="text-white font-black uppercase tracking-widest text-sm">
-      {title}
-    </h4>
-    <ul className="space-y-2">
+}) => (
+  <div className="space-y-6">
+    <h4 className="text-sm font-bold text-gray-900 tracking-tight">{title}</h4>
+    <ul className="space-y-4">
       {links.map((link) => (
         <li key={link}>
           <a
             href="#"
-            className="text-white/60 hover:text-orange-400 transition-colors text-sm font-medium"
+            className="text-sm text-gray-500 hover:text-red-600 transition-colors duration-300"
           >
-            {link}
+            {link.toLowerCase()}
           </a>
         </li>
       ))}

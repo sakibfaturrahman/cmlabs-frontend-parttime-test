@@ -1,27 +1,28 @@
 // src/components/molecules/VideoPlayer.tsx
-import { Play } from "lucide-react";
+import { PlayCircle } from "lucide-react";
 
 export const VideoPlayer = ({ url, title }: { url: string; title: string }) => {
   const videoId = url.split("v=")[1];
   const embedUrl = `https://www.youtube.com/embed/${videoId}`;
 
   return (
-    <div className="mt-24">
-      <div className="text-center mb-12">
-        <h2 className="text-4xl font-black text-[#4A3728] uppercase tracking-tighter flex items-center justify-center gap-4">
-          <Play className="fill-orange-600 text-orange-600" /> Video Tutorial
+    <div className="space-y-12">
+      <div className="text-center space-y-3">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 text-red-600 text-[10px] font-bold tracking-widest uppercase">
+          <PlayCircle size={14} />
+          <span>masterclass</span>
+        </div>
+        <h2 className="text-4xl font-bold text-gray-900 tracking-tight">
+          video tutorial.
         </h2>
-        <p className="text-gray-400 mt-2 font-medium">
-          Watch the step-by-step guide to master this dish
-        </p>
       </div>
-      <div className="relative w-full max-w-5xl mx-auto aspect-video rounded-[3rem] overflow-hidden shadow-2xl border-[12px] border-gray-50">
+      <div className="relative w-full aspect-video rounded-[3rem] overflow-hidden shadow-2xl shadow-red-900/10 border-[12px] border-gray-50">
         <iframe
           className="absolute inset-0 w-full h-full"
           src={embedUrl}
           title={title}
           allowFullScreen
-        ></iframe>
+        />
       </div>
     </div>
   );

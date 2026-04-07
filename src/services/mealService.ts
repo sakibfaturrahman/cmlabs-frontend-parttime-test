@@ -2,68 +2,57 @@ const BASE_URL = "https://www.themealdb.com/api/json/v1/1";
 
 export const mealService = {
   /**
-   * 1. List of Ingredients
-   * Mengambil semua daftar bahan makanan.
+   * Helper untuk fetch agar tidak repetitif
    */
-  async getAllIngredients() {
+  async fetchData(endpoint: string) {
     try {
-      const res = await fetch(`${BASE_URL}/list.php?i=list`);
-      if (!res.ok) throw new Error("Gagal mengambil data ingredients");
+      const res = await fetch(`${BASE_URL}/${endpoint}`, {
+        // Cache data selama 1 jam (opsional, tergantung browser/Next.js)
+        next: { revalidate: 3600 },
+      });
+      if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
       const data = await res.json();
-
-      // Kita tambahkan strThumb secara manual karena API list tidak menyediakannya
-      return (
-        data.meals?.map((ing: any) => ({
-          ...ing,
-          strThumb: `https://www.themealdb.com/images/ingredients/${ing.strIngredient}.png`,
-        })) || []
-      );
+      return data.meals;
     } catch (error) {
-      console.error("Error in getAllIngredients:", error);
-      return [];
-    }
-  },
-
-  /**
-   * 2. Filter by Ingredient
-   * Mengambil daftar masakan berdasarkan nama bahan (e.g. 'chicken_breast').
-   */
-  async getMealsByIngredient(ingredientName: string) {
-    try {
-      const res = await fetch(`${BASE_URL}/filter.php?i=${ingredientName}`);
-      if (!res.ok) throw new Error("Gagal memfilter berdasarkan bahan");
-      const data = await res.json();
-      return data.meals || [];
-    } catch (error) {
-      console.error(
-        `Error in getMealsByIngredient for ${ingredientName}:`,
-        error,
-      );
-      return [];
-    }
-  },
-
-  /**
-   * 3. Detail Meal
-   * Mengambil detail lengkap satu masakan berdasarkan ID.
-   */
-  async getMealById(mealId: string) {
-    try {
-      const res = await fetch(`${BASE_URL}/lookup.php?i=${mealId}`);
-      if (!res.ok) throw new Error("Gagal mengambil detail masakan");
-      const data = await res.json();
-      // Mengembalikan objek pertama karena API ini mengembalikan array
-      return data.meals ? data.meals[0] : null;
-    } catch (error) {
-      console.error(`Error in getMealById for ${mealId}:`, error);
+      console.error(`Fetch Error [${endpoint}]:`, error);
       return null;
     }
   },
 
-  /**
-   * 4. Featured Meals (Custom Helper)
-   * Digunakan untuk Landing Page (mengambil data awal masakan ayam).
-   */
+  // 1. List semua bahan
+  async getAllIngredients() {
+    const meals = await this.fetchData("list.php?i=list");
+    return (
+      meals?.map((ing: any) => ({
+        ...ing,
+        strThumb: `https://www.themealdb.com/images/ingredients/${ing.strIngredient}.png`,
+      })) || []
+    );
+  },
+
+  // 2. Filter masakan berdasarkan satu bahan (e.g. 'chicken_breast')
+  async getMealsByIngredient(ingredient: string) {
+    return (await this.fetchData(`filter.php?i=${ingredient}`)) || [];
+  },
+
+  // 3. Detail lengkap masakan berdasarkan ID
+  async getMealById(id: string) {
+    const meals = await this.fetchData(`lookup.php?i=${id}`);
+    return meals ? meals[0] : null;
+  },
+
+  // 4. PENCARIAN GLOBAL (Berdasarkan Nama) - Penting untuk Navbar tadi
+  async searchMealByName(name: string) {
+    return (await this.fetchData(`search.php?s=${name}`)) || [];
+  },
+
+  // 5. Mengambil masakan acak (Bagus untuk fitur "Surprise Me")
+  async getRandomMeal() {
+    const meals = await this.fetchData("random.php");
+    return meals ? meals[0] : null;
+  },
+
+  // 6. Featured Meals untuk Landing Page
   async getFeaturedMeals() {
     return this.getMealsByIngredient("chicken_breast");
   },

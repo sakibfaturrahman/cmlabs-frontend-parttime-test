@@ -1,9 +1,9 @@
-// src/components/organisms/FeaturedMeals.tsx
 "use client";
 import { useEffect, useState } from "react";
 import { mealService } from "@/services/mealService";
-import { Utensils } from "lucide-react";
+import { UtensilsCrossed, ArrowRight } from "lucide-react";
 import { MealCard } from "@/components/molecules/mealCard";
+import { Button } from "@/components/ui/button";
 
 export const FeaturedMeals = () => {
   const [meals, setMeals] = useState<any[]>([]);
@@ -15,32 +15,46 @@ export const FeaturedMeals = () => {
   }, []);
 
   return (
-    <section className="py-24 bg-[#FDFDFD]">
-      <div className="container mx-auto px-6 lg:px-16">
+    <section className="py-24 bg-white">
+      <div className="container mx-auto max-w-6xl px-8 lg:px-12">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
           <div className="max-w-xl">
-            <div className="flex items-center gap-2 text-orange-600 font-bold mb-4">
-              <Utensils size={20} />
-              <span className="uppercase tracking-[0.3em] text-sm">
+            <div className="flex items-center gap-2 text-red-600 font-semibold mb-4">
+              <UtensilsCrossed size={18} />
+              <span className="text-xs tracking-wider">
                 Chef's Recommendation
               </span>
             </div>
-            <h2 className="text-5xl font-black text-[#4A3728] leading-tight">
-              Inspirasi Menu <br /> Hari Ini
+            <h2 className="text-5xl font-bold text-gray-900 leading-tight tracking-tight">
+              daily inspiration <br />
+              <span className="text-red-600">for your table.</span>
             </h2>
           </div>
-          <p className="text-gray-500 md:max-w-xs italic border-l-4 border-orange-200 pl-4">
-            "Satu bahan sederhana bisa berubah menjadi ribuan hidangan luar
-            biasa."
-          </p>
+
+          <div className="hidden md:block">
+            <p className="text-gray-400 max-w-[200px] text-sm leading-relaxed border-l-2 border-red-100 pl-4 py-1">
+              "A simple ingredient can turn into thousands of extraordinary
+              dishes."
+            </p>
+          </div>
         </div>
 
-        {/* Meals Grid menggunakan Molecule */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        {/* Meals Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
           {meals.map((meal, index) => (
             <MealCard key={meal.idMeal} meal={meal} index={index} />
           ))}
+        </div>
+
+        {/* Bottom CTA (Optional) */}
+        <div className="mt-20 flex justify-center">
+          <Button
+            variant="outline"
+            className="rounded-2xl border-gray-200 text-gray-600 hover:text-red-600 hover:border-red-100 hover:bg-red-50/50 px-8 h-12 transition-all"
+          >
+            View more recipes
+          </Button>
         </div>
       </div>
     </section>

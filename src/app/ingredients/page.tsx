@@ -1,87 +1,115 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { mealService } from "@/services/mealService";
 import { CategoryLayout } from "@/components/templates/categoryLayout";
-import { SearchBar } from "@/components/molecules/searchBar";
 import { IngredientCard } from "@/components/molecules/ingredientCard";
-import { Utensils } from "lucide-react";
+import { SearchBar } from "@/components/molecules/searchBar"; // Import Molekul
+import { Loader2, ListFilter, Search } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const LIMIT_OPTIONS = [12, 48, 96, "all"];
 
 export default function AllIngredientsPage() {
   const [ingredients, setIngredients] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [limit, setLimit] = useState<number | string>(12);
 
-  // Data Fetching
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await mealService.getAllIngredients();
-        setIngredients(data);
-      } catch (error) {
-        console.error("Error fetching ingredients:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
+    mealService.getAllIngredients().then((data) => {
+      setIngredients(data || []);
+      setLoading(false);
+    });
   }, []);
 
-  // Search Logic
-  const filteredIngredients = ingredients.filter((ing) =>
-    ing.strIngredient.toLowerCase().includes(search.toLowerCase()),
-  );
+  const displayIngredients = useMemo(() => {
+    const filtered = ingredients.filter((ing) =>
+      ing.strIngredient.toLowerCase().includes(search.toLowerCase()),
+    );
+
+    if (limit === "all") return filtered;
+    return filtered.slice(0, Number(limit));
+  }, [ingredients, search, limit]);
 
   return (
     <CategoryLayout
       title="All Ingredients"
-      description="Temukan bahan makanan terbaik untuk eksperimen dapurmu hari ini."
-      headerBg="bg-orange-50"
+      description="discover the best ingredients for your kitchen experiments today."
       searchSlot={
-        <SearchBar
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Cari bahan (Chicken, Beef, Garlic...)"
-        />
+        <div className="max-w-xl mx-auto">
+          <SearchBar
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search ingredients (e.g. chicken, beef, salmon)..."
+            variant="default" // Pakai variant default untuk tampilan yang lebih besar
+          />
+        </div>
       }
     >
-      {/* Loading State */}
       {loading ? (
-        <div className="flex flex-col items-center justify-center py-20 gap-4">
-          <div className="w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-orange-600 font-bold animate-pulse text-sm uppercase tracking-widest">
-            Menyiapkan Bahan...
+        <div className="flex flex-col items-center justify-center py-32 gap-4">
+          <Loader2 className="w-8 h-8 text-red-600 animate-spin" />
+          <p className="text-gray-400 font-medium text-sm tracking-tight">
+            gathering fresh ingredients...
           </p>
         </div>
       ) : (
         <>
-          {/* Result Count */}
-          <div className="mb-8">
-            <p className="text-gray-400 font-medium italic">
-              Showing{" "}
-              <span className="text-orange-600 font-bold">
-                {filteredIngredients.length}
-              </span>{" "}
-              ingredients found
-            </p>
+          {/* Controls Section */}
+          <div className="mb-12 flex flex-col md:flex-row items-center justify-between gap-6 border-b border-gray-100 pb-8">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-red-50 rounded-lg text-red-600">
+                <ListFilter size={18} />
+              </div>
+              <p className="text-gray-400 text-sm font-medium">
+                showing{" "}
+                <span className="text-gray-900 font-bold">
+                  {displayIngredients.length}
+                </span>{" "}
+                of {ingredients.length} items
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2 bg-gray-50 p-1 rounded-xl border border-gray-100">
+              <span className="text-[10px] font-bold text-gray-400 px-3 uppercase tracking-widest">
+                Show:
+              </span>
+              {LIMIT_OPTIONS.map((opt) => (
+                <button
+                  key={opt}
+                  onClick={() => setLimit(opt)}
+                  className={cn(
+                    "px-4 py-1.5 rounded-lg text-xs font-bold transition-all",
+                    limit === opt
+                      ? "bg-white text-red-600 shadow-sm ring-1 ring-black/5"
+                      : "text-gray-400 hover:text-gray-600",
+                  )}
+                >
+                  {opt === "all" ? "All" : opt}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Grid Layout */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {filteredIngredients.map((ing) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">
+            {displayIngredients.map((ing) => (
               <IngredientCard key={ing.idIngredient} ing={ing} />
             ))}
           </div>
 
           {/* Empty State */}
-          {filteredIngredients.length === 0 && (
-            <div className="text-center py-32 bg-white rounded-[3rem] border-2 border-dashed border-gray-100 mt-10">
-              <Utensils className="w-16 h-16 text-gray-200 mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-gray-400">
-                Bahan tidak ditemukan
+          {displayIngredients.length === 0 && (
+            <div className="text-center py-32 bg-gray-50/20 rounded-[3rem] border border-dashed border-gray-100">
+              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-gray-50">
+                <Search className="text-gray-200" size={32} />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 tracking-tight">
+                no ingredients found
               </h3>
-              <p className="text-gray-300 mt-2 font-medium">
-                Coba gunakan kata kunci pencarian yang lain.
+              <p className="text-gray-400 mt-2 font-medium">
+                try using different keywords or clear your search.
               </p>
             </div>
           )}
