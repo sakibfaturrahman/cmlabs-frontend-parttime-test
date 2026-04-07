@@ -10,6 +10,16 @@ import { usePathname, useRouter } from "next/navigation";
 import { mealService } from "@/services/mealService";
 import Image from "next/image";
 
+const NAV_ITEMS = [
+  { id: "home", label: "home", href: "/", icon: <Home size={16} /> },
+  {
+    id: "ingredients",
+    label: "ingredients",
+    href: "/ingredients",
+    icon: <Salad size={16} />,
+  },
+];
+
 export const Navbar = () => {
   const pathname = usePathname();
   const router = useRouter();
