@@ -91,9 +91,6 @@ export const Navbar = () => {
           href="/"
           className="flex items-center gap-2 flex-shrink-0 group cursor-pointer"
         >
-          <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
-            <div className="w-2 h-2 bg-white rounded-full" />
-          </div>
           <span className="text-xl font-bold text-gray-900 tracking-tight">
             mealio
           </span>
