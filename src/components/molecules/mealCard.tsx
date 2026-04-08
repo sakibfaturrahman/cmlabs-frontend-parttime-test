@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Globe } from "lucide-react";
 
 interface MealCardProps {
   meal: any;
@@ -28,6 +28,7 @@ export const MealCard = ({ meal, index, ingredientName }: MealCardProps) => {
             src={meal.strMealThumb}
             alt={meal.strMeal}
             fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
             className="object-cover transition-transform duration-700 group-hover:scale-105"
           />
 
@@ -38,13 +39,16 @@ export const MealCard = ({ meal, index, ingredientName }: MealCardProps) => {
           </div>
         </div>
 
-        <div className="space-y-1 px-2">
+        <div className="space-y-2 px-2">
           <h4 className="text-lg font-bold text-gray-900 group-hover:text-red-600 transition-colors duration-300 line-clamp-2 leading-snug">
             {meal.strMeal.toLowerCase()}
           </h4>
-          <p className="text-xs font-medium text-gray-400">
-            recipe by mealio chef
-          </p>
+
+          <div className="flex items-center gap-1.5">
+            <p className="text-xs font-medium text-gray-400">
+              {(meal.strArea || "global").toLowerCase()} cuisine
+            </p>
+          </div>
         </div>
       </Link>
     </motion.div>

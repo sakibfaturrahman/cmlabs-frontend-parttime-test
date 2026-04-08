@@ -54,19 +54,28 @@ export const useMeals = () => {
   }, []);
 
   // logic untuk daily featured meals
+  /**
+   * 3. Logic untuk Featured Meals: Rekomendasi Harian (Enriched with Area Data)
+   */
   const getDailyFeaturedMeals = useCallback(async (limit = 8) => {
     setLoading(true);
     try {
-      // get data dasar, lalu acak dengan seed tanggal
       const meals = await mealService.getFeaturedMeals();
       const seed = getDailySeed();
 
       const shuffled = [...meals].sort(() => {
-        const x = Math.sin(seed + 1) * 10000; // +1 supaya beda dengan ingredient
+        const x = Math.sin(seed + 1) * 10000; // +1 untuk beda seed dari top ingredients
         return x - Math.floor(x) - 0.5;
       });
 
-      return shuffled.slice(0, limit);
+      const selected = shuffled.slice(0, limit);
+      const enrichedMeals = await Promise.all(
+        selected.map(async (m: any) => {
+          return await mealService.getMealById(m.idMeal);
+        }),
+      );
+
+      return enrichedMeals;
     } catch (err) {
       setError("Failed to fetch daily featured meals");
       return [];
@@ -92,7 +101,17 @@ export const useMeals = () => {
   const getMealsByIngredient = useCallback(async (name: string) => {
     setLoading(true);
     try {
-      return await mealService.getMealsByIngredient(name);
+      const basicMeals = await mealService.getMealsByIngredient(name);
+      if (!basicMeals || basicMeals.length === 0) return [];
+      // get data enrichment untuk detail lengkap untuk tiap resep agar dapat strArea
+      // batasi 12 saja supaya tidak terlalu berat request-nya
+      const detailedMeals = await Promise.all(
+        basicMeals.slice(0, 12).map(async (m: any) => {
+          return await mealService.getMealById(m.idMeal);
+        }),
+      );
+
+      return detailedMeals;
     } catch (err) {
       setError(`Failed to fetch meals for ${name}`);
       return [];
