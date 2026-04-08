@@ -15,7 +15,7 @@ Aplikasi ini dibangun dengan fokus pada performa, antarmuka yang modern, dan str
 
 ### Key Features
 
-- **Onboarding Screen**: Animasi premium selama 2 detik saat aplikasi pertama kali dimuat untuk _brand awareness_.
+- **Onboarding Screen**: Animasi selama 2 detik saat aplikasi pertama kali dimuat untuk _brand awareness_.
 - **Dynamic Hero Section**: Rekomendasi menu harian yang berubah secara otomatis setiap hari menggunakan _Seeded Logic_.
 - **Top Ingredients Today**: Carousel bahan makanan pilihan harian dengan fitur _drag & scroll_.
 - **Featured Meals**: Inspirasi masakan harian yang sudah diperkaya dengan data asal negara (_strArea_).
