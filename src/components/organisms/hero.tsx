@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, ChevronRight, Loader2 } from "lucide-react";
+import { ArrowRight, ChevronRight, Loader2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useMeals } from "@/hooks/useMeals";
 import Link from "next/link";
@@ -19,9 +19,8 @@ export const Hero = () => {
     getDailyHeroMeal().then((data) => setMeal(data));
   }, [getDailyHeroMeal]);
 
-  // Logic URL: /ingredients/[strCategory]/[idMeal]
-  // Kita gunakan strCategory sebagai fallback jika nama bahan spesifik tidak ada
-  const recipeUrl = `/ingredients/${meal?.strCategory || "all"}/${meal?.idMeal}`;
+  // pake strCategory sebagai fallback kalo nama bahan spesifik tidak ada maka pake recipes
+  const recipeUrl = `/ingredients/${meal?.strCategory || "recipes"}/${meal?.idMeal}`;
 
   if (loading && !meal) {
     return (
@@ -33,11 +32,9 @@ export const Hero = () => {
 
   return (
     <section className="relative min-h-[90vh] flex items-center pt-24 pb-12 overflow-hidden bg-white">
-      {/* Background Subtle Gradient Blobs */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-50/50 rounded-full blur-[120px] -z-10" />
 
       <div className="container mx-auto max-w-6xl px-8 lg:px-12 grid lg:grid-cols-2 gap-12 items-center relative z-10">
-        {/* Left: Content */}
         <motion.div
           initial="hidden"
           animate="visible"
@@ -70,13 +67,12 @@ export const Hero = () => {
             }}
           >
             <p className="text-gray-500 text-lg leading-relaxed mb-4 max-w-sm">
-              rekomendasi menu hari ini khusus untukmu, perpaduan rasa yang
-              autentik dan cara masak yang mudah.
+              today's menu recommendation is just for you, a combination of
+              authentic flavors and easy cooking methods.
             </p>
-            {/* LINK DISESUAIKAN: /ingredients/nama/id */}
             <Link href={recipeUrl}>
               <button className="flex items-center gap-1 text-sm font-semibold text-red-600 hover:gap-2 transition-all mb-10">
-                Lihat resep <ChevronRight size={16} />
+                View Recipe <ChevronRight size={16} />
               </button>
             </Link>
           </motion.div>
@@ -93,7 +89,7 @@ export const Hero = () => {
                 size="lg"
                 className="bg-red-600 hover:bg-red-700 text-white px-8 h-14 rounded-2xl font-medium shadow-xl shadow-red-100 transition-all group"
               >
-                Explore recipes
+                Explore Ingredients
                 <ArrowRight
                   size={18}
                   className="ml-2 transition-transform group-hover:translate-x-1"
@@ -103,7 +99,6 @@ export const Hero = () => {
           </motion.div>
         </motion.div>
 
-        {/* Right: Image with Abstract Borders */}
         <motion.div
           style={{ y: y1 }}
           className="relative flex justify-center lg:justify-end"
@@ -112,29 +107,29 @@ export const Hero = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1, ease: "easeOut" }}
-            className="relative w-full max-w-[420px] aspect-square flex items-center justify-center"
+            className="relative w-full max-w-[420px] aspect-square flex items-center justify-center p-4"
           >
-            {/* Abstract Borders / Decorative Elements */}
-            <div className="absolute inset-0 border-[2px] border-dashed border-red-200 rounded-[4rem] rotate-6 scale-105 -z-10 opacity-60" />
-            <div className="absolute inset-0 border-[1px] border-solid border-red-100 rounded-[3.5rem] -rotate-3 scale-110 -z-10 opacity-40" />
+            <div className="absolute inset-0 border border-gray-100 rounded-full -z-10" />
+            <div className="absolute inset-4 border border-gray-100 rounded-full -z-10" />
 
-            {/* Ambient Shadow */}
-            <div className="absolute inset-0 bg-red-100/30 rounded-full blur-[80px] -z-20 transform translate-y-12 scale-75" />
+            <div className="absolute inset-0 bg-red-50/50 rounded-full blur-[60px] -z-20 transform translate-y-6" />
+            <div className="relative w-full h-full">
+              <div className="absolute bottom-[-15px] right-[-15px] w-full h-full border-2 border-red-600 rounded-[3rem] -z-10 transition-transform duration-500 group-hover:translate-x-2 group-hover:translate-y-2" />
 
-            <div className="relative w-[90%] h-[90%] overflow-hidden rounded-[3rem] border-[8px] border-white shadow-2xl">
-              <Image
-                src={
-                  meal?.strMealThumb ||
-                  "https://www.themealdb.com/images/ingredients/chicken.png"
-                }
-                alt={meal?.strMeal || "mealio"}
-                fill
-                className="object-cover transition-transform duration-700 hover:scale-110"
-                priority
-              />
+              <div className="relative w-full h-full overflow-hidden rounded-[3rem] bg-white border border-gray-100 shadow-xl">
+                <Image
+                  src={
+                    meal?.strMealThumb ||
+                    "https://www.themealdb.com/images/ingredients/chicken.png"
+                  }
+                  alt={meal?.strMeal || "mealio"}
+                  fill
+                  className="object-cover transition-transform duration-700 hover:scale-105"
+                  priority
+                />
+              </div>
             </div>
 
-            {/* Floating Molecule Badge */}
             <motion.div
               animate={{ y: [0, -12, 0] }}
               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}

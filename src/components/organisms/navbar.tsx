@@ -1,20 +1,20 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Home, Salad, Menu, Loader2 } from "lucide-react";
+import { Home, Salad, Menu, Loader2, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { SearchBar } from "@/components/molecules/searchBar";
-import { useMeals } from "@/hooks/useMeals"; // Import Custom Hook
+import { useMeals } from "@/hooks/useMeals";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 
 const NAV_ITEMS = [
-  { id: "home", label: "home", href: "/", icon: <Home size={16} /> },
+  { id: "home", label: "Home", href: "/", icon: <Home size={16} /> },
   {
     id: "ingredients",
-    label: "ingredients",
+    label: "Ingredients",
     href: "/ingredients",
     icon: <Salad size={16} />,
   },
@@ -24,17 +24,15 @@ export const Navbar = () => {
   const pathname = usePathname();
   const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // States
   const [searchValue, setSearchValue] = useState("");
   const [results, setResults] = useState<any[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Gunakan Search logic dari custom hooks
   const { searchMeals, loading: isSearching } = useMeals();
 
-  // Close dropdown on click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -48,14 +46,13 @@ export const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Handle Scroll effect
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Debounced Search Logic menggunakan Hook
+  // ini debounced search logic menggunakan hook
   useEffect(() => {
     const delayDebounceFn = setTimeout(async () => {
       if (searchValue.trim().length > 2) {
@@ -71,6 +68,14 @@ export const Navbar = () => {
     return () => clearTimeout(delayDebounceFn);
   }, [searchValue, searchMeals]);
 
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+  }, [isMobileMenuOpen]);
+
   return (
     <nav
       className={cn(
@@ -81,20 +86,15 @@ export const Navbar = () => {
       )}
     >
       <div className="container mx-auto max-w-6xl px-8 lg:px-12 flex items-center justify-between gap-8">
-        {/* LEFT: Brand */}
         <Link
           href="/"
           className="flex items-center gap-2 flex-shrink-0 group cursor-pointer"
         >
-          <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center transition-transform group-hover:rotate-12">
-            <div className="w-2 h-2 bg-white rounded-full" />
-          </div>
-          <span className="text-xl font-bold text-gray-900 tracking-tight">
+          <span className="text-xl font-black text-gray-900 tracking-tight">
             mealio
           </span>
         </Link>
 
-        {/* CENTER: Search Bar with Dropdown */}
         <div
           className="flex-1 max-w-sm hidden md:block relative"
           ref={dropdownRef}
@@ -125,7 +125,6 @@ export const Navbar = () => {
                       <button
                         key={meal.idMeal}
                         onClick={() => {
-                          // Navigasi ke detail resep
                           router.push(
                             `/ingredients/${meal.strCategory}/${meal.idMeal}`,
                           );
@@ -166,12 +165,8 @@ export const Navbar = () => {
           </AnimatePresence>
         </div>
 
-        {/* RIGHT: Navigation */}
         <div className="hidden md:flex items-center gap-8">
           {NAV_ITEMS.map((item) => {
-            // LOGIKA ACTIVE LINK:
-            // Jika link adalah "/", harus sama persis.
-            // Jika link adalah "/ingredients", cek apakah pathname diawali dengan "/ingredients"
             const isActive =
               item.href === "/"
                 ? pathname === "/"
@@ -201,11 +196,136 @@ export const Navbar = () => {
           })}
         </div>
 
-        {/* Action: Mobile Menu */}
-        <button className="md:hidden p-2 text-gray-600 hover:bg-gray-50 rounded-xl transition-colors">
-          <Menu size={24} />
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="md:hidden p-2 text-gray-600 hover:bg-gray-50 rounded-xl transition-colors z-[70]"
+        >
+          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
+
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, x: "100%" }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="fixed inset-0 bg-white z-[65] md:hidden flex flex-col p-8 pt-32 gap-10"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="relative"
+            >
+              <SearchBar
+                variant="navbar"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                placeholder="search recipes..."
+              />
+              <AnimatePresence>
+                {showDropdown && searchValue.trim().length > 2 && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mt-2 bg-gray-50 rounded-2xl border border-gray-100 overflow-hidden p-2"
+                  >
+                    {isSearching ? (
+                      <div className="p-4 flex justify-center italic text-xs text-gray-400">
+                        finding...
+                      </div>
+                    ) : (
+                      results.map((meal) => (
+                        <button
+                          key={meal.idMeal}
+                          onClick={() => {
+                            router.push(
+                              `/ingredients/${meal.strCategory}/${meal.idMeal}`,
+                            );
+                            setIsMobileMenuOpen(false);
+                            setSearchValue("");
+                          }}
+                          className="flex items-center gap-3 p-2 w-full text-left active:bg-red-50 rounded-xl transition-colors"
+                        >
+                          <div className="relative w-8 h-8 rounded-lg overflow-hidden shrink-0">
+                            <Image
+                              src={meal.strMealThumb}
+                              alt={meal.strMeal}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                          <p className="text-xs font-bold text-gray-900 truncate">
+                            {meal.strMeal.toLowerCase()}
+                          </p>
+                        </button>
+                      ))
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+
+            <div className="flex flex-col gap-4">
+              {NAV_ITEMS.map((item, index) => {
+                const isActive =
+                  item.href === "/"
+                    ? pathname === "/"
+                    : pathname.startsWith(item.href);
+
+                return (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, x: 50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{
+                      type: "spring",
+                      delay: 0.2 + index * 0.1,
+                      stiffness: 100,
+                    }}
+                  >
+                    <Link
+                      href={item.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={cn(
+                        "flex items-center justify-between p-5 rounded-[2rem] text-xl font-bold transition-all active:scale-95",
+                        isActive
+                          ? "bg-red-600 text-white shadow-lg shadow-red-200"
+                          : "bg-gray-50 text-gray-500 active:bg-gray-100",
+                      )}
+                    >
+                      <div className="flex items-center gap-4">
+                        {item.icon}
+                        {item.label}
+                      </div>
+                      {isActive && (
+                        <motion.div
+                          layoutId="active-pill-mobile"
+                          className="w-2 h-2 bg-white rounded-full"
+                        />
+                      )}
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="mt-auto text-center pb-8"
+            >
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-300">
+                mealio • daily recipes
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { useMeals } from "@/hooks/useMeals"; // Import Custom Hook
+import { useMeals } from "@/hooks/useMeals";
 import { CategoryLayout } from "@/components/templates/categoryLayout";
 import { IngredientCard } from "@/components/molecules/ingredientCard";
 import { SearchBar } from "@/components/molecules/searchBar";
@@ -15,7 +15,6 @@ export default function AllIngredientsPage() {
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState<number | string>(12);
 
-  // Menggunakan hooks useMeals
   const { getAllIngredients, loading, error } = useMeals();
 
   useEffect(() => {
@@ -50,7 +49,6 @@ export default function AllIngredientsPage() {
         </div>
       }
     >
-      {/* Error State */}
       {error && (
         <div className="flex items-center justify-center py-20 text-red-500 gap-2">
           <AlertCircle size={20} />
@@ -58,7 +56,6 @@ export default function AllIngredientsPage() {
         </div>
       )}
 
-      {/* Loading State */}
       {loading && ingredients.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-32 gap-4">
           <Loader2 className="w-8 h-8 text-red-600 animate-spin" />
@@ -68,7 +65,6 @@ export default function AllIngredientsPage() {
         </div>
       ) : (
         <>
-          {/* Controls Section */}
           <div className="mb-12 flex flex-col md:flex-row items-center justify-between gap-6 border-b border-gray-100 pb-8">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-red-50 rounded-lg text-red-600">
@@ -104,14 +100,12 @@ export default function AllIngredientsPage() {
             </div>
           </div>
 
-          {/* Grid Layout */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">
             {displayIngredients.map((ing) => (
               <IngredientCard key={ing.idIngredient} ing={ing} />
             ))}
           </div>
 
-          {/* Empty State */}
           {!loading && displayIngredients.length === 0 && (
             <div className="text-center py-32 bg-gray-50/20 rounded-[3rem] border border-dashed border-gray-100">
               <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-gray-50">

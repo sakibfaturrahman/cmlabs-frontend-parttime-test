@@ -1,6 +1,3 @@
-// src/components/molecules/VideoPlayer.tsx
-import { PlayCircle } from "lucide-react";
-
 export const VideoPlayer = ({ url, title }: { url: string; title: string }) => {
   const videoId = url.split("v=")[1];
   const embedUrl = `https://www.youtube.com/embed/${videoId}`;

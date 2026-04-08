@@ -1,4 +1,3 @@
-// src/components/templates/CategoryLayout.tsx
 import { Navbar } from "@/components/organisms/navbar";
 import { Footer } from "@/components/organisms/footer";
 import { motion } from "framer-motion";

@@ -1,23 +1,29 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
-import { useMeals } from "@/hooks/useMeals"; // Import hook
+import { useMeals } from "@/hooks/useMeals";
 import { motion, useMotionValue, animate } from "framer-motion";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { SwiperIngredient } from "@/components/molecules/swipeIngredient";
 
-export const IngredientPreview = () => {
-  const { getDailyTopIngredients, loading } = useMeals(); // Gunakan fungsi harian
+export const TopIngredient = () => {
+  const { getDailyTopIngredients, loading } = useMeals();
   const [items, setItems] = useState<any[]>([]);
+  const [hasMounted, setHasMounted] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
   const x = useMotionValue(0);
 
   useEffect(() => {
-    // Fetch top ingredients harian (limit 12)
-    getDailyTopIngredients(12).then((data) => {
-      setItems(data);
-    });
-  }, [getDailyTopIngredients]);
+    setHasMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (hasMounted) {
+      getDailyTopIngredients(12).then((data) => {
+        setItems(data);
+      });
+    }
+  }, [getDailyTopIngredients, hasMounted]);
 
   useEffect(() => {
     if (carouselRef.current) {
@@ -41,25 +47,16 @@ export const IngredientPreview = () => {
       damping: 30,
     });
   };
+  if (!hasMounted) return null;
 
   return (
     <section className="py-24 bg-white overflow-hidden">
       <div className="container mx-auto max-w-6xl px-8 lg:px-12">
         <div className="flex flex-col lg:flex-row items-start lg:items-center gap-12">
-          {/* Header Section */}
           <div className="w-full lg:w-1/3 space-y-4 z-10 bg-white">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 text-red-600 text-[10px] font-bold tracking-widest uppercase">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-              </span>
-              Daily Pick
-            </div>
             <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
               top ingredients{" "}
-              <span className="text-red-600 text-sm italic font-serif">
-                today.
-              </span>
+              <span className="text-red-600 text-sm">today.</span>
             </h2>
             <p className="text-gray-400 text-sm leading-relaxed max-w-[240px]">
               Discover fresh, seasonal ingredients handpicked for your daily
@@ -82,7 +79,6 @@ export const IngredientPreview = () => {
             </div>
           </div>
 
-          {/* Carousel Section */}
           <div className="w-full lg:w-2/3 min-w-0 relative">
             {loading && items.length === 0 ? (
               <div className="flex h-[210px] items-center justify-center">

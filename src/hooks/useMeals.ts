@@ -5,27 +5,23 @@ export const useMeals = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  /**
-   * Helper Logic: Mendapatkan angka unik berdasarkan tanggal (YYYYMMDD)
-   * Digunakan untuk mengocok data secara konsisten setiap harinya.
-   */
+  //helper logic untuk get angka unik berdasarkan tanggal untuk mengocok data secara konsisten setiap harinya
+
   const getDailySeed = () => {
     const d = new Date();
     return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
   };
 
-  /**
-   * 1. Logic untuk Hero: Rekomendasi Meal Harian (Refresh Harian)
-   */
+  // get daily masak
   const getDailyHeroMeal = useCallback(async () => {
     setLoading(true);
     try {
-      // Kita ambil dari featured atau search umum, lalu pilih berdasarkan seed tanggal
+      // get data dasar untuk featured meals, lalu pilih satu secara acak berdasarkan seed tanggal
       const meals = await mealService.getFeaturedMeals();
       const seed = getDailySeed();
       const dailyMeal = meals[seed % meals.length];
 
-      // Ambil detail lengkapnya agar Hero punya deskripsi/instruksi
+      // get detail buat link ke halaman detail
       return await mealService.getMealById(dailyMeal.idMeal);
     } catch (err) {
       setError("Failed to fetch daily hero meal");
@@ -35,16 +31,14 @@ export const useMeals = () => {
     }
   }, []);
 
-  /**
-   * 2. Logic untuk Top Ingredients: Rekomendasi Harian
-   */
+  //  logic untuk daily top ingredients
   const getDailyTopIngredients = useCallback(async (limit = 12) => {
     setLoading(true);
     try {
       const allIng = await mealService.getAllIngredients();
       const seed = getDailySeed();
 
-      // Mengacak list secara konsisten berdasarkan seed tanggal
+      // aacak list secara konsisten berdasarkan seed tanggal
       const shuffled = [...allIng].sort(() => {
         const x = Math.sin(seed) * 10000;
         return x - Math.floor(x) - 0.5;
@@ -59,13 +53,11 @@ export const useMeals = () => {
     }
   }, []);
 
-  /**
-   * 3. Logic untuk Featured Meals: Rekomendasi Harian
-   */
+  // logic untuk daily featured meals
   const getDailyFeaturedMeals = useCallback(async (limit = 8) => {
     setLoading(true);
     try {
-      // Kita ambil data dasar, lalu acak dengan seed tanggal
+      // get data dasar, lalu acak dengan seed tanggal
       const meals = await mealService.getFeaturedMeals();
       const seed = getDailySeed();
 
@@ -83,9 +75,7 @@ export const useMeals = () => {
     }
   }, []);
 
-  /**
-   * 4. Fetch All Ingredients (Standard)
-   */
+  // get all ingredients
   const getAllIngredients = useCallback(async () => {
     setLoading(true);
     try {
@@ -98,9 +88,7 @@ export const useMeals = () => {
     }
   }, []);
 
-  /**
-   * 5. Fetch Meals by Ingredient (Untuk Halaman Detail Ingredient)
-   */
+  // get meals by ingredient
   const getMealsByIngredient = useCallback(async (name: string) => {
     setLoading(true);
     try {
@@ -113,9 +101,7 @@ export const useMeals = () => {
     }
   }, []);
 
-  /**
-   * 6. Fetch Recipe Detail by Meal ID
-   */
+  // get recipe by id
   const getRecipeById = useCallback(async (id: string) => {
     setLoading(true);
     try {
@@ -128,9 +114,7 @@ export const useMeals = () => {
     }
   }, []);
 
-  /**
-   * 7. Search Meals by Name (Pencarian Global)
-   */
+  // search meals by name
   const searchMeals = useCallback(async (query: string) => {
     if (!query) return [];
     setLoading(true);
@@ -144,7 +128,6 @@ export const useMeals = () => {
     }
   }, []);
 
-  // JANGAN LUPA: Tambahkan searchMeals ke dalam return di bawah ini
   return {
     loading,
     error,
@@ -154,6 +137,6 @@ export const useMeals = () => {
     getAllIngredients,
     getMealsByIngredient,
     getRecipeById,
-    searchMeals, // <-- WAJIB ADA DI SINI
+    searchMeals,
   };
 };

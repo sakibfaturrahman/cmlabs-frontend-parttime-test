@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useMeals } from "@/hooks/useMeals"; // Import Custom Hook
+import { useMeals } from "@/hooks/useMeals";
 import { UtensilsCrossed, Loader2 } from "lucide-react";
 import { MealCard } from "@/components/molecules/mealCard";
 import { Button } from "@/components/ui/button";
@@ -9,10 +9,10 @@ import Link from "next/link";
 
 export const FeaturedMeals = () => {
   const [meals, setMeals] = useState<any[]>([]);
-  const { getDailyFeaturedMeals, loading } = useMeals(); // Gunakan logic harian
+  const { getDailyFeaturedMeals, loading } = useMeals();
 
   useEffect(() => {
-    // Mengambil 8 rekomendasi menu harian
+    // get data 8 rekomendasi menu harian
     getDailyFeaturedMeals(8).then((data) => {
       setMeals(data);
     });
@@ -21,7 +21,6 @@ export const FeaturedMeals = () => {
   return (
     <section className="py-24 bg-white">
       <div className="container mx-auto max-w-6xl px-8 lg:px-12">
-        {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
           <div className="max-w-xl">
             <div className="flex items-center gap-2 text-red-600 font-semibold mb-4">
@@ -44,7 +43,6 @@ export const FeaturedMeals = () => {
           </div>
         </div>
 
-        {/* Loading State & Meals Grid */}
         {loading && meals.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
             <Loader2 className="w-10 h-10 text-red-600 animate-spin" />
@@ -60,7 +58,6 @@ export const FeaturedMeals = () => {
           </div>
         )}
 
-        {/* Bottom CTA */}
         <div className="mt-24 flex justify-center">
           <Link href="/ingredients">
             <Button

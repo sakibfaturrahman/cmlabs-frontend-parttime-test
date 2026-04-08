@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useParams } from "next/navigation";
-import { useMeals } from "@/hooks/useMeals"; // Import Custom Hook
+import { useMeals } from "@/hooks/useMeals";
 import { CategoryLayout } from "@/components/templates/categoryLayout";
 import { MealCard } from "@/components/molecules/mealCard";
 import { SearchBar } from "@/components/molecules/searchBar";
@@ -19,7 +19,6 @@ export default function IngredientDetailPage() {
   const [search, setSearch] = useState("");
   const [limit, setLimit] = useState<number | string>(12);
 
-  // Menggunakan hooks useMeals
   const { getMealsByIngredient, loading, error } = useMeals();
 
   useEffect(() => {
@@ -55,7 +54,6 @@ export default function IngredientDetailPage() {
         </div>
       }
     >
-      {/* Error State */}
       {error && (
         <div className="flex items-center justify-center py-20 text-red-500 gap-2">
           <AlertCircle size={20} />
@@ -63,7 +61,6 @@ export default function IngredientDetailPage() {
         </div>
       )}
 
-      {/* Skeleton Loading State */}
       {loading && meals.length === 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
           {[...Array(8)].map((_, i) => (
@@ -76,7 +73,6 @@ export default function IngredientDetailPage() {
         </div>
       ) : (
         <>
-          {/* Result & Filter Info */}
           <div className="mb-12 flex flex-col md:flex-row items-center justify-between gap-6 border-b border-gray-100 pb-8">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-red-50 rounded-lg text-red-600 shadow-sm shadow-red-100/50">
@@ -91,7 +87,6 @@ export default function IngredientDetailPage() {
               </p>
             </div>
 
-            {/* Pill Switcher */}
             <div className="flex items-center gap-2 bg-gray-50 p-1 rounded-xl border border-gray-100">
               <span className="text-[10px] font-bold text-gray-400 px-3 uppercase tracking-widest">
                 limit:
@@ -113,7 +108,6 @@ export default function IngredientDetailPage() {
             </div>
           </div>
 
-          {/* Grid Layout */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
             {displayMeals.map((meal, index) => (
               <MealCard
@@ -125,7 +119,6 @@ export default function IngredientDetailPage() {
             ))}
           </div>
 
-          {/* Empty State */}
           {!loading && displayMeals.length === 0 && (
             <div className="text-center py-32 bg-gray-50/20 rounded-[3rem] border border-dashed border-gray-100">
               <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-gray-50">

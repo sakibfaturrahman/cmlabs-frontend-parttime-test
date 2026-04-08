@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useMeals } from "@/hooks/useMeals"; // Import Hook
+import { useMeals } from "@/hooks/useMeals";
 import { DetailTemplate } from "@/components/templates/detailTemplate";
 import { IngredientList } from "@/components/molecules/ingredientList";
 import { VideoPlayer } from "@/components/molecules/videoPlayer";
@@ -14,7 +14,6 @@ export default function MealDetailPage() {
   const router = useRouter();
   const [meal, setMeal] = useState<any>(null);
 
-  // Ambil state dan function dari useMeals
   const { getRecipeById, loading, error } = useMeals();
 
   useEffect(() => {

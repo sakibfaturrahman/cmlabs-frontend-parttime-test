@@ -1,13 +1,10 @@
 const BASE_URL = "https://www.themealdb.com/api/json/v1/1";
 
 export const mealService = {
-  /**
-   * Helper untuk fetch agar tidak repetitif
-   */
   async fetchData(endpoint: string) {
     try {
       const res = await fetch(`${BASE_URL}/${endpoint}`, {
-        // Cache data selama 1 jam (opsional, tergantung browser/Next.js)
+        // caching data selama 1 jam untuk mengurangi beban API dan mempercepat response
         next: { revalidate: 3600 },
       });
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
@@ -19,7 +16,7 @@ export const mealService = {
     }
   },
 
-  // 1. List semua bahan
+  // get list all bahan
   async getAllIngredients() {
     const meals = await this.fetchData("list.php?i=list");
     return (
@@ -30,29 +27,29 @@ export const mealService = {
     );
   },
 
-  // 2. Filter masakan berdasarkan satu bahan (e.g. 'chicken_breast')
+  // get data meals by ingredient
   async getMealsByIngredient(ingredient: string) {
     return (await this.fetchData(`filter.php?i=${ingredient}`)) || [];
   },
 
-  // 3. Detail lengkap masakan berdasarkan ID
+  // get detail lengkap masakan berdasarkan id
   async getMealById(id: string) {
     const meals = await this.fetchData(`lookup.php?i=${id}`);
     return meals ? meals[0] : null;
   },
 
-  // 4. PENCARIAN GLOBAL (Berdasarkan Nama) - Penting untuk Navbar tadi
+  //logic search global
   async searchMealByName(name: string) {
     return (await this.fetchData(`search.php?s=${name}`)) || [];
   },
 
-  // 5. Mengambil masakan acak (Bagus untuk fitur "Surprise Me")
+  // get random meal untuk fitur surprise me
   async getRandomMeal() {
     const meals = await this.fetchData("random.php");
     return meals ? meals[0] : null;
   },
 
-  // 6. Featured Meals untuk Landing Page
+  // get rekomendasi masakan
   async getFeaturedMeals() {
     return this.getMealsByIngredient("chicken_breast");
   },

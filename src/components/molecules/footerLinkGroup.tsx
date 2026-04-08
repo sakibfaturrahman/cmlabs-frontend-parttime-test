@@ -1,4 +1,3 @@
-// src/components/molecules/footerLinkGroup.tsx
 export const FooterLinkGroup = ({
   title,
   links,
