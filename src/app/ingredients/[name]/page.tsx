@@ -2,11 +2,11 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useParams } from "next/navigation";
-import { mealService } from "@/services/mealService";
+import { useMeals } from "@/hooks/useMeals"; // Import Custom Hook
 import { CategoryLayout } from "@/components/templates/categoryLayout";
 import { MealCard } from "@/components/molecules/mealCard";
-import { SearchBar } from "@/components/molecules/searchBar"; // Import Molekul
-import { ChefHat, Loader2, ListFilter, Search } from "lucide-react";
+import { SearchBar } from "@/components/molecules/searchBar";
+import { ChefHat, Loader2, ListFilter, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const LIMIT_OPTIONS = [12, 24, "all"];
@@ -17,22 +17,20 @@ export default function IngredientDetailPage() {
 
   const [meals, setMeals] = useState<any[]>([]);
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
   const [limit, setLimit] = useState<number | string>(12);
 
+  // Menggunakan hooks useMeals
+  const { getMealsByIngredient, loading, error } = useMeals();
+
   useEffect(() => {
-    const fetchMeals = async () => {
-      try {
-        const data = await mealService.getMealsByIngredient(ingredientName);
+    const fetchInitialData = async () => {
+      if (ingredientName) {
+        const data = await getMealsByIngredient(ingredientName);
         setMeals(data || []);
-      } catch (error) {
-        console.error("Error:", error);
-      } finally {
-        setLoading(false);
       }
     };
-    if (ingredientName) fetchMeals();
-  }, [ingredientName]);
+    fetchInitialData();
+  }, [ingredientName, getMealsByIngredient]);
 
   const displayMeals = useMemo(() => {
     const filtered = meals.filter((meal) =>
@@ -57,7 +55,16 @@ export default function IngredientDetailPage() {
         </div>
       }
     >
-      {loading ? (
+      {/* Error State */}
+      {error && (
+        <div className="flex items-center justify-center py-20 text-red-500 gap-2">
+          <AlertCircle size={20} />
+          <p className="font-medium">{error}</p>
+        </div>
+      )}
+
+      {/* Skeleton Loading State */}
+      {loading && meals.length === 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
           {[...Array(8)].map((_, i) => (
             <div key={i} className="space-y-4">
@@ -119,7 +126,7 @@ export default function IngredientDetailPage() {
           </div>
 
           {/* Empty State */}
-          {displayMeals.length === 0 && (
+          {!loading && displayMeals.length === 0 && (
             <div className="text-center py-32 bg-gray-50/20 rounded-[3rem] border border-dashed border-gray-100">
               <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-gray-50">
                 <ChefHat className="text-gray-200" size={32} />

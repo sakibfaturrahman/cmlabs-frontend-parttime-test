@@ -1,18 +1,22 @@
 "use client";
+
 import { useEffect, useState } from "react";
-import { mealService } from "@/services/mealService";
-import { UtensilsCrossed, ArrowRight } from "lucide-react";
+import { useMeals } from "@/hooks/useMeals"; // Import Custom Hook
+import { UtensilsCrossed, Loader2 } from "lucide-react";
 import { MealCard } from "@/components/molecules/mealCard";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export const FeaturedMeals = () => {
   const [meals, setMeals] = useState<any[]>([]);
+  const { getDailyFeaturedMeals, loading } = useMeals(); // Gunakan logic harian
 
   useEffect(() => {
-    mealService.getFeaturedMeals().then((data) => {
-      setMeals(data.slice(0, 8));
+    // Mengambil 8 rekomendasi menu harian
+    getDailyFeaturedMeals(8).then((data) => {
+      setMeals(data);
     });
-  }, []);
+  }, [getDailyFeaturedMeals]);
 
   return (
     <section className="py-24 bg-white">
@@ -32,29 +36,40 @@ export const FeaturedMeals = () => {
             </h2>
           </div>
 
-          <div className="hidden md:block">
-            <p className="text-gray-400 max-w-[200px] text-sm leading-relaxed border-l-2 border-red-100 pl-4 py-1">
+          <div className="hidden md:block text-right">
+            <p className="text-gray-400 max-w-[200px] text-sm leading-relaxed border-l-2 border-red-100 pl-4 py-1 italic">
               "A simple ingredient can turn into thousands of extraordinary
               dishes."
             </p>
           </div>
         </div>
 
-        {/* Meals Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
-          {meals.map((meal, index) => (
-            <MealCard key={meal.idMeal} meal={meal} index={index} />
-          ))}
-        </div>
+        {/* Loading State & Meals Grid */}
+        {loading && meals.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 gap-4">
+            <Loader2 className="w-10 h-10 text-red-600 animate-spin" />
+            <p className="text-gray-400 font-medium text-sm italic">
+              curating your daily menu...
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
+            {meals.map((meal, index) => (
+              <MealCard key={meal.idMeal} meal={meal} index={index} />
+            ))}
+          </div>
+        )}
 
-        {/* Bottom CTA (Optional) */}
-        <div className="mt-20 flex justify-center">
-          <Button
-            variant="outline"
-            className="rounded-2xl border-gray-200 text-gray-600 hover:text-red-600 hover:border-red-100 hover:bg-red-50/50 px-8 h-12 transition-all"
-          >
-            View more recipes
-          </Button>
+        {/* Bottom CTA */}
+        <div className="mt-24 flex justify-center">
+          <Link href="/ingredients">
+            <Button
+              variant="outline"
+              className="rounded-2xl border-gray-100 text-gray-500 hover:text-red-600 hover:border-red-200 hover:bg-red-50/30 px-10 h-14 font-semibold transition-all shadow-sm hover:shadow-md"
+            >
+              View more recipes
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

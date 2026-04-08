@@ -1,4 +1,4 @@
-// src/components/molecules/swipeIngredient.tsx
+"use client";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
@@ -8,28 +8,34 @@ export const SwiperIngredient = ({ ing }: { ing: any }) => {
 
   return (
     <motion.div
-      // Menggunakan onTap agar tidak bentrok dengan fungsi drag
       onTap={() => router.push(`/ingredients/${ing.strIngredient}`)}
-      whileHover={{ y: -8, boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1)" }}
+      whileHover={{
+        y: -10,
+        scale: 1.02,
+        boxShadow: "0 25px 30px -10px rgb(220 38 38 / 0.1)",
+      }}
       whileTap={{ scale: 0.95 }}
-      className="min-w-[160px] h-[210px] bg-white border border-gray-100 rounded-3xl p-6 flex flex-col items-center justify-between transition-all cursor-pointer group shrink-0"
+      className="min-w-[170px] h-[220px] bg-white border border-gray-100 rounded-[2.5rem] p-6 flex flex-col items-center justify-between transition-all cursor-pointer group shrink-0 shadow-sm"
     >
-      <div className="relative w-20 h-20 transition-transform group-hover:scale-110 duration-300 pointer-events-none">
+      <div className="relative w-24 h-24 transition-transform group-hover:rotate-6 duration-500 pointer-events-none">
         <Image
           src={`https://www.themealdb.com/images/ingredients/${ing.strIngredient}.png`}
           alt={ing.strIngredient}
           fill
           className="object-contain"
+          sizes="96px"
         />
       </div>
 
       <div className="text-center space-y-1 pointer-events-none">
-        <span className="block text-sm font-semibold text-gray-800 leading-tight">
-          {ing.strIngredient}
+        <span className="block text-sm font-bold text-gray-900 leading-tight">
+          {ing.strIngredient.toLowerCase()}
         </span>
-        <span className="block text-[10px] text-red-500 font-medium">
-          Fresh Product
-        </span>
+        <div className="flex items-center justify-center gap-1">
+          <span className="block text-[9px] text-red-500 tracking-widest">
+            rekommendation
+          </span>
+        </div>
       </div>
     </motion.div>
   );

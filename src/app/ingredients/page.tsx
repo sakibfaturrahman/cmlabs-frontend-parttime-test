@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { mealService } from "@/services/mealService";
+import { useMeals } from "@/hooks/useMeals"; // Import Custom Hook
 import { CategoryLayout } from "@/components/templates/categoryLayout";
 import { IngredientCard } from "@/components/molecules/ingredientCard";
-import { SearchBar } from "@/components/molecules/searchBar"; // Import Molekul
-import { Loader2, ListFilter, Search } from "lucide-react";
+import { SearchBar } from "@/components/molecules/searchBar";
+import { Loader2, ListFilter, Search, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const LIMIT_OPTIONS = [12, 48, 96, "all"];
@@ -13,15 +13,18 @@ const LIMIT_OPTIONS = [12, 48, 96, "all"];
 export default function AllIngredientsPage() {
   const [ingredients, setIngredients] = useState<any[]>([]);
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
   const [limit, setLimit] = useState<number | string>(12);
 
+  // Menggunakan hooks useMeals
+  const { getAllIngredients, loading, error } = useMeals();
+
   useEffect(() => {
-    mealService.getAllIngredients().then((data) => {
+    const fetchData = async () => {
+      const data = await getAllIngredients();
       setIngredients(data || []);
-      setLoading(false);
-    });
-  }, []);
+    };
+    fetchData();
+  }, [getAllIngredients]);
 
   const displayIngredients = useMemo(() => {
     const filtered = ingredients.filter((ing) =>
@@ -42,15 +45,24 @@ export default function AllIngredientsPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search ingredients (e.g. chicken, beef, salmon)..."
-            variant="default" // Pakai variant default untuk tampilan yang lebih besar
+            variant="default"
           />
         </div>
       }
     >
-      {loading ? (
+      {/* Error State */}
+      {error && (
+        <div className="flex items-center justify-center py-20 text-red-500 gap-2">
+          <AlertCircle size={20} />
+          <p className="font-medium">{error}</p>
+        </div>
+      )}
+
+      {/* Loading State */}
+      {loading && ingredients.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-32 gap-4">
           <Loader2 className="w-8 h-8 text-red-600 animate-spin" />
-          <p className="text-gray-400 font-medium text-sm tracking-tight">
+          <p className="text-gray-400 font-medium text-sm tracking-tight italic">
             gathering fresh ingredients...
           </p>
         </div>
@@ -100,7 +112,7 @@ export default function AllIngredientsPage() {
           </div>
 
           {/* Empty State */}
-          {displayIngredients.length === 0 && (
+          {!loading && displayIngredients.length === 0 && (
             <div className="text-center py-32 bg-gray-50/20 rounded-[3rem] border border-dashed border-gray-100">
               <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-gray-50">
                 <Search className="text-gray-200" size={32} />

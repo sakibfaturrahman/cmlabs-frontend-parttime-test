@@ -8,10 +8,6 @@ export const VideoPlayer = ({ url, title }: { url: string; title: string }) => {
   return (
     <div className="space-y-12">
       <div className="text-center space-y-3">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 text-red-600 text-[10px] font-bold tracking-widest uppercase">
-          <PlayCircle size={14} />
-          <span>masterclass</span>
-        </div>
         <h2 className="text-4xl font-bold text-gray-900 tracking-tight">
           video tutorial.
         </h2>
