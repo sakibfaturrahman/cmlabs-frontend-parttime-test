@@ -1,26 +1,46 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Onboarding } from "@/components/molecules/onboarding";
 import { Navbar } from "@/components/organisms/navbar";
 import { Hero } from "@/components/organisms/hero";
 import { Discovery } from "@/components/organisms/discovery";
 import { TopIngredient } from "@/components/organisms/topIngredient";
 import { FeaturedMeals } from "@/components/organisms/featuredMeals";
 import { Footer } from "@/components/organisms/footer";
-import { mealService } from "@/services/mealService";
 
-export default async function LandingPage() {
-  const allIngredients = await mealService.getAllIngredients();
-  const featured = allIngredients[0];
+export default function LandingPage() {
+  const [showOnboarding, setShowOnboarding] = useState(true);
+
+  useEffect(() => {
+    // Set onboarding selama 2 detik
+    const timer = setTimeout(() => {
+      setShowOnboarding(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
-    <div className="min-h-screen bg-white">
-      <Navbar />
-      <main className="pt-5 lg:pt-20">
-        <Hero />
-        <TopIngredient />
-        <Discovery />
-        <FeaturedMeals />
-      </main>
+    <>
+      <AnimatePresence>{showOnboarding && <Onboarding />}</AnimatePresence>
 
-      <Footer />
-    </div>
+      <div className="min-h-screen bg-white">
+        <Navbar />
+        <motion.main
+          initial={{ opacity: 0 }}
+          animate={{ opacity: showOnboarding ? 0 : 1 }}
+          transition={{ duration: 1 }}
+          className="pt-10 lg:pt-5"
+        >
+          <Hero />
+          <TopIngredient />
+          <Discovery />
+          <FeaturedMeals />
+          <Footer />
+        </motion.main>
+      </div>
+    </>
   );
 }
