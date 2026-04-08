@@ -1,36 +1,106 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CMLABS Front-end Developer Practical Test
+
+**PT CMLABS INDONESIA DIGITAL** Software Engineering Division | Software Development and Maintenance Support Sector  
+**Position:** Front-end Developer (Part-time)  
+**Project Name:** Mealio - Daily Recipes App  
+**Code:** FE-PT-02-2
+
+---
+
+## Overview
+
+Project ini dikembangkan sebagai bagian dari **Pre-assessment Test** untuk posisi Front-end Developer di cmlabs. Aplikasi ini bernama **Mealio**, sebuah platform eksplorasi resep masakan yang memanfaatkan API dari `TheMealDB`.
+
+Aplikasi ini dibangun dengan fokus pada performa, antarmuka yang modern, dan struktur kode yang modular menggunakan **Atomic Design Pattern**.
+
+### Key Features
+
+- **Onboarding Screen**: Animasi premium selama 2 detik saat aplikasi pertama kali dimuat untuk _brand awareness_.
+- **Dynamic Hero Section**: Rekomendasi menu harian yang berubah secara otomatis setiap hari menggunakan _Seeded Logic_.
+- **Top Ingredients Today**: Carousel bahan makanan pilihan harian dengan fitur _drag & scroll_.
+- **Featured Meals**: Inspirasi masakan harian yang sudah diperkaya dengan data asal negara (_strArea_).
+- **Advanced Search**: Fitur pencarian resep secara _real-time_ langsung dari Navbar dengan _debounce logic_.
+- **Full Responsive**: Antarmuka yang adaptif untuk perangkat Desktop, Tablet, hingga Mobile.
+
+---
+
+## Tech Stack
+
+- **Framework**: [Next.js 14+](https://nextjs.org/) (App Router)
+- **Language**: TypeScript
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Component Library**: [Shadcn UI](https://ui.shadcn.com/)
+- **Animation**: [Framer Motion](https://www.framer.com/motion/)
+- **Icons**: Lucide React
+- **Deployment**: Vercel
+
+---
+
+## Project Links
+
+- **Repository**: [https://github.com/sakibfaturrahman/cmlabs-frontend-parttime-test](https://github.com/sakibfaturrahman/cmlabs-frontend-parttime-test)
+- **Live Demo**: [https://mealio-recipes.vercel.app/](https://mealio-recipes.vercel.app/)
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Pastikan Anda sudah menginstal **Node.js** (versi 18.x atau terbaru).
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation & Running
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1.  **Clone Repository**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+    ```bash
+    git clone [https://github.com/sakibfaturrahman/cmlabs-frontend-parttime-test.git](https://github.com/sakibfaturrahman/cmlabs-frontend-parttime-test.git)
+    cd cmlabs-frontend-parttime-test
+    ```
 
-## Learn More
+2.  **Install Dependencies**
 
-To learn more about Next.js, take a look at the following resources:
+    ```bash
+    npm install
+    ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3.  **Run Development Server**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+    ```bash
+    npm run dev
+    ```
 
-## Deploy on Vercel
+    Buka [http://localhost:3000](http://localhost:3000) pada browser Anda.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4.  **Build for Production**
+    ```bash
+    npm run build
+    npm run start
+    ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Architecture (Atomic Design)
+
+Project ini mengikuti struktur komponen atomik untuk memastikan skalabilitas:
+
+- **Atoms**: Komponen dasar seperti Button, Badge, dan Icon.
+- **Molecules**: Gabungan atom seperti SearchBar, IngredientCard, dan SwiperIngredient.
+- **Organisms**: Komponen kompleks seperti Navbar, Hero, TopIngredient, dan FeaturedMeals.
+- **Templates**: Layout halaman seperti CategoryLayout dan DetailTemplate.
+- **Hooks**: Manajemen logika bisnis terpusat pada `useMeals.ts`.
+- **Services**: Abstraksi API calls pada `mealService.ts`.
+
+---
+
+## Technical Notes
+
+- **Hydration Mismatch Fix**: Menggunakan state `hasMounted` untuk menangani konten dinamis berbasis waktu agar sinkron antara Server dan Client.
+- **Data Enrichment**: Mengimplementasikan _parallel fetching_ pada `getMealsByIngredient` dan `getDailyFeaturedMeals` untuk melengkapi data `strArea` yang tidak disediakan secara default oleh endpoint filter API.
+- **Mobile UX Optimization**: Memperbaiki masalah _sticky elements_ pada tampilan mobile untuk navigasi yang lebih mulus.
+
+---
+
+**Validated by:** Rifqi Ardhian (Lead)  
+**Date:** 12th March 2026  
+**Developer:** Sakib Faturrahman

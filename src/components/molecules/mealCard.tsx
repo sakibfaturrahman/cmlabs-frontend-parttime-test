@@ -45,7 +45,7 @@ export const MealCard = ({ meal, index, ingredientName }: MealCardProps) => {
           </h4>
 
           <div className="flex items-center gap-1.5">
-            <p className="text-xs font-medium text-gray-400">
+            <p className="text-xs font-medium text-red-600">
               {(meal.strArea || "global").toLowerCase()} cuisine
             </p>
           </div>
