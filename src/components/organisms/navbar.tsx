@@ -214,13 +214,25 @@ export const Navbar = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed inset-0 bg-white z-[105] md:hidden flex flex-col p-8 pt-32 gap-10"
+            className="fixed inset-0 bg-white z-[120] md:hidden flex flex-col p-8 pt-24 gap-10"
           >
+            <div className="flex justify-between items-center absolute top-6 left-8 right-8">
+              <span className="text-xl font-black text-gray-900 tracking-tight">
+                mealio
+              </span>
+              <button
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="p-2 text-gray-900 hover:bg-gray-100 rounded-xl transition-all"
+              >
+                <X size={28} />
+              </button>
+            </div>
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="relative"
+              className="relative mt-4"
             >
               <SearchBar
                 variant="navbar"
