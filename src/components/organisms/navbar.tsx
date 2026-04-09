@@ -52,7 +52,6 @@ export const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // ini debounced search logic menggunakan hook
   useEffect(() => {
     const delayDebounceFn = setTimeout(async () => {
       if (searchValue.trim().length > 2) {
@@ -83,6 +82,7 @@ export const Navbar = () => {
         isScrolled
           ? "bg-white/80 backdrop-blur-xl border-b border-gray-100 py-3 shadow-sm"
           : "bg-white border-transparent py-6",
+        isMobileMenuOpen && "bg-white",
       )}
     >
       <div className="container mx-auto max-w-6xl px-8 lg:px-12 flex items-center justify-between gap-8 relative z-[101]">
@@ -197,13 +197,10 @@ export const Navbar = () => {
         </div>
 
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsMobileMenuOpen(!isMobileMenuOpen);
-          }}
-          className="md:hidden p-2 text-gray-900 hover:bg-gray-100 rounded-xl transition-all relative z-[110]"
+          onClick={() => setIsMobileMenuOpen(true)}
+          className="md:hidden p-2 text-gray-900 hover:bg-gray-100 rounded-xl transition-all"
         >
-          {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          <Menu size={28} />
         </button>
       </div>
 
@@ -213,8 +210,8 @@ export const Navbar = () => {
             initial={{ opacity: 0, x: "100%" }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed inset-0 bg-white z-[120] md:hidden flex flex-col p-8 pt-24 gap-10"
+            transition={{ type: "spring", damping: 30, stiffness: 300 }}
+            className="fixed inset-0 bg-white z-[200] md:hidden flex flex-col p-8 pt-24 gap-10 h-screen w-screen overflow-y-auto"
           >
             <div className="flex justify-between items-center absolute top-6 left-8 right-8">
               <span className="text-xl font-black text-gray-900 tracking-tight">
